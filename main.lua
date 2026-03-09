@@ -1,5 +1,5 @@
 local Map = require "src.map.map"
-local Player = require "src.player.player"
+local Player = require "src.entities.player.player"
 
 function love.load()
     Map.load()
