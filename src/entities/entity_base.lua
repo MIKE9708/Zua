@@ -12,6 +12,10 @@ function EntityBase.init(config)
     entity.x = 0
     entity.y = 0
     entity.timer = 0
+    -- This is the Entity Movement Speed
+    entity.speed = 200
+    -- Either 1 or -1 to flip the image
+    entity.FlipX = 1
     -- A dictionary where the key is the Animation and the Values are:
     -- imgs, the various frame of the player (in a single png) loaded in love
     -- frames, how many frame are in a image
@@ -19,17 +23,17 @@ function EntityBase.init(config)
     entity.Animations = {}
     entity.Animations[EntityBase.Animation.Idle] = {
         imgs = love.graphics.newImage(entity.Config.idle),
-        frames = 8,
-        speed = 0.2
+        frames = entity.Config.idle_frames,
+        speed = 0.1
     }
     entity.Animations[EntityBase.Animation.Run] = {
         imgs = love.graphics.newImage(entity.Config.run),
-        frames = 6,
+        frames = entity.Config.run_frames,
         speed = 0.2
     }
     entity.Animations[EntityBase.Animation.Attack] = {
         imgs = love.graphics.newImage(entity.Config.attack),
-        frames = 4,
+        frames = entity.Config.attack_frames,
         speed = 0.07
     }
     -- imgs,  The animation image of the current Player Stand (Idle, Run, etc)
@@ -63,6 +67,20 @@ function EntityBase.init(config)
                 entity.CurrentState.frame = 1
             end
         end
+    end
+
+    -- TODO
+    function entity.move(x, y)
+        entity.x = x
+        entity.y = y
+    end
+
+    function entity.handleOverlap(_entityPosx, _entityPosy)
+    end
+
+    -- TODO
+    function entity.attack()
+        entity.setState(EntityBase.Animation.Attack)
     end
 
     function entity.setState(new_state)

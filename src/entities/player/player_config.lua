@@ -16,6 +16,11 @@ Config.tile_size = 192
 Config.tile_x = math.ceil(Config.screen_width / Config.tile_size)
 Config.tile_y = math.ceil(Config.screen_height / Config.tile_size)
 
+Config.idle_frames = 8
+Config.run_frames = 6
+Config.attack_frames = 4
+
+
 Config.timer = 0
 
 return Config
