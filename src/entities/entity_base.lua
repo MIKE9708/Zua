@@ -5,7 +5,7 @@ local EntityBase = {}
 EntityBase.Animation = { Run = 0, Idle = 1, Attack = 2 }
 
 -- Recieve either player or enemy config to create a basic structure
-function EntityBase.init(config)
+function EntityBase.init(config, etype)
     local entity = {}
     entity.Config = config
     -- Define the Entity position on the Screen
@@ -16,6 +16,7 @@ function EntityBase.init(config)
     entity.speed = 200
     -- Either 1 or -1 to flip the image
     entity.FlipX = 1
+    entity.type = etype
     -- A dictionary where the key is the Animation and the Values are:
     -- imgs, the various frame of the player (in a single png) loaded in love
     -- frames, how many frame are in a image
@@ -54,51 +55,48 @@ function EntityBase.init(config)
     -- if that is the case move to the next frame
     -- If the last frame has been reached restart from the First, but
     -- if the Animation is Attack when it reaches the last frame put the Player Animation in Idle
-    function entity.updateFrame(animation, dt)
-        entity.Config.timer = entity.Config.timer + dt
-        if entity.Config.timer > animation.speed then
-            entity.Config.timer = 0
-            entity.CurrentState.frame = entity.CurrentState.frame + 1
+    function entity:updateFrame(animation, dt)
+        self.Config.timer = self.Config.timer + dt
+        if self.Config.timer > animation.speed then
+            self.Config.timer = 0
+            self.CurrentState.frame = self.CurrentState.frame + 1
 
-            if entity.CurrentState.frame > animation.frames then
-                if entity.CurrentState.current_animation == EntityBase.Animation.Attack then
-                    entity.setState(EntityBase.Animation.Idle)
+            if self.CurrentState.frame > animation.frames then
+                if self.CurrentState.current_animation == EntityBase.Animation.Attack then
+                    self:setState(EntityBase.Animation.Idle)
                 end
-                entity.CurrentState.frame = 1
+                self.CurrentState.frame = 1
             end
         end
     end
 
     -- TODO
-    function entity.move(x, y)
-        entity.x = x
-        entity.y = y
-    end
-
-    function entity.handleOverlap(_entityPosx, _entityPosy)
+    function entity:move(x, y)
+        self.x = x
+        self.y = y
     end
 
     -- TODO
-    function entity.attack()
-        entity.setState(EntityBase.Animation.Attack)
+    function entity:attack()
+        self:setState(EntityBase.Animation.Attack)
     end
 
-    function entity.setState(new_state)
-        if entity.CurrentState.current_animation == new_state then
+    function entity:setState(new_state)
+        if self.CurrentState.current_animation == new_state then
             return
         else
-            entity.CurrentState.current_animation = new_state
-            entity.CurrentState.imgs = entity.Animations[new_state].imgs
-            entity.CurrentState.frame = 1
+            self.CurrentState.current_animation = new_state
+            self.CurrentState.imgs = self.Animations[new_state].imgs
+            self.CurrentState.frame = 1
 
-            local total_w, total_h = entity.CurrentState.imgs:getDimensions()
-            entity.Quad:setViewport(0, 0, entity.Config.tile_size, entity.Config.tile_size, total_w,
+            local total_w, total_h = self.CurrentState.imgs:getDimensions()
+            self.Quad:setViewport(0, 0, self.Config.tile_size, self.Config.tile_size, total_w,
                 total_h)
         end
     end
 
-    function entity.draw()
-        love.graphics.draw(entity.CurrentState.imgs, entity.Quad, entity.x, entity.y, 0, 1, 1, 96, 96)
+    function entity:draw()
+        love.graphics.draw(self.CurrentState.imgs, self.Quad, self.x, self.y, 0, 1, 1, 96, 96)
     end
 
     return entity

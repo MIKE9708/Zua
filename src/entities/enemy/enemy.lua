@@ -19,30 +19,30 @@ function Enemy.getDistance()
     return distance
 end
 
-function Enemy.followPlayer(dt)
+function Enemy:followPlayer(dt)
     -- Movement along X
-    if math.abs(Enemy.base.x + 1 - Enemy.playerPos.x)
+    if math.abs(self.base.x + 1 - self.playerPos.x)
         <
-        math.abs(Enemy.base.x - Enemy.playerPos.x) then
-        Enemy.base.move(Enemy.base.x + Enemy.base.speed * dt, Enemy.base.y)
-        Enemy.base.FlipX = 1
-    elseif math.abs(Enemy.base.x - 1 - Enemy.playerPos.x)
+        math.abs(self.base.x - self.playerPos.x) then
+        self.base:move(self.base.x + self.base.speed * dt, self.base.y)
+        self.base.FlipX = 1
+    elseif math.abs(self.base.x - 1 - self.playerPos.x)
         <
-        math.abs(Enemy.base.x - Enemy.playerPos.x) then
-        Enemy.base.move(Enemy.base.x - Enemy.base.speed * dt, Enemy.base.y)
-        Enemy.base.FlipX = -1
+        math.abs(self.base.x - self.playerPos.x) then
+        self.base:move(self.base.x - self.base.speed * dt, self.base.y)
+        self.base.FlipX = -1
     end
     -- Movement along Y
     if
-        math.abs(Enemy.base.y + 1 - Enemy.playerPos.y)
+        math.abs(self.base.y + 1 - self.playerPos.y)
         <
-        math.abs(Enemy.base.y - Enemy.playerPos.y) then
-        Enemy.base.move(Enemy.base.x, Enemy.base.y + Enemy.base.speed * dt)
+        math.abs(self.base.y - self.playerPos.y) then
+        self.base:move(self.base.x, self.base.y + self.base.speed * dt)
     elseif
-        math.abs(Enemy.base.y - 1 - Enemy.playerPos.y)
+        math.abs(self.base.y - 1 - self.playerPos.y)
         <
-        math.abs(Enemy.base.y - Enemy.playerPos.y) then
-        Enemy.base.move(Enemy.base.x, Enemy.base.y - Enemy.base.speed * dt)
+        math.abs(self.base.y - self.playerPos.y) then
+        self.base:move(self.base.x, self.base.y - self.base.speed * dt)
     end
 end
 
@@ -59,42 +59,42 @@ end
 -- This will call enemy move
 -- and check if the Enemy has to attack the
 -- player or not
-function Enemy.update(dt, x, y)
-    Enemy.playerPos = {
+function Enemy:update(dt, x, y)
+    self.playerPos = {
         x = x,
         y = y
     }
 
-    local distance_x = math.abs(Enemy.base.x - Enemy.playerPos.x)
-    local distance_y = math.abs(Enemy.base.y - Enemy.playerPos.y)
+    local distance_x = math.abs(self.base.x - self.playerPos.x)
+    local distance_y = math.abs(self.base.y - self.playerPos.y)
     local distance = (distance_x * distance_x) + (distance_y * distance_y)
 
-    if distance <= Enemy.idleMinDistance then
-        Enemy.isChasing = false
-    elseif distance > Enemy.runMinDistance and distance < 200 * 200 then
-        Enemy.isChasing = true
-    elseif distance > Enemy.idleMaxDistance then
-        Enemy.isChasing = false
+    if distance <= self.idleMinDistance then
+        self.isChasing = false
+    elseif distance > self.runMinDistance and distance < 200 * 200 then
+        self.isChasing = true
+    elseif distance > self.idleMaxDistance then
+        self.isChasing = false
     end
 
-    if Enemy.isChasing then
-        if Enemy.base.CurrentState.current_animation ~= EntityBase.Animation.Run then
-            Enemy.base.setState(EntityBase.Animation.Run)
+    if self.isChasing then
+        if self.base.CurrentState.current_animation ~= EntityBase.Animation.Run then
+            self.base:setState(EntityBase.Animation.Run)
         end
-        Enemy.followPlayer(dt)
+        self:followPlayer(dt)
     else
-        if Enemy.base.CurrentState.current_animation ~= EntityBase.Animation.Idle then
-            Enemy.base.setState(EntityBase.Animation.Idle)
+        if self.base.CurrentState.current_animation ~= EntityBase.Animation.Idle then
+            self.base:setState(EntityBase.Animation.Idle)
         end
     end
 
-    Enemy.base.updateFrame(Enemy.base.Animations[Enemy.base.CurrentState.current_animation], dt)
-    local frame_x = (Enemy.base.CurrentState.frame - 1) * Enemy.Config.tile_size
-    Enemy.base.Quad:setViewport(frame_x, 0, Enemy.Config.tile_size, Enemy.Config.tile_size)
+    self.base:updateFrame(self.base.Animations[self.base.CurrentState.current_animation], dt)
+    local frame_x = (self.base.CurrentState.frame - 1) * self.Config.tile_size
+    self.base.Quad:setViewport(frame_x, 0, self.Config.tile_size, self.Config.tile_size)
 end
 
-function Enemy.setPlayerPos(x, y)
-    Enemy.playerPos = {
+function Enemy:setPlayerPos(x, y)
+    self.playerPos = {
         x = x,
         y = y
     }
@@ -115,9 +115,19 @@ function Enemy.load(x, y)
     }
 end
 
-function Enemy.draw()
-    love.graphics.draw(Enemy.base.CurrentState.imgs, Enemy.base.Quad, Enemy.base.x, Enemy.base.y, 0,
-        Enemy.base.FlipX, 1, 96, 96)
+function Enemy:draw()
+    love.graphics.draw(self.base.CurrentState.imgs, self.base.Quad, self.base.x, self.base.y, 0,
+        self.base.FlipX, 1, 96, 96)
+end
+
+function Enemy.new(start_x, start_y)
+    local istance = {}
+    istance.base = EntityBase.init(Enemy.Config);
+    istance.base.x = start_x
+    istance.base.y = start_y
+    setmetatable(istance, { __index = Enemy })
+
+    return istance
 end
 
 return Enemy

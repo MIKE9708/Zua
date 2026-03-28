@@ -13,6 +13,7 @@
     };
 
     in {
+      # To run nixGLIntel followed by love
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = [pkgs.lua pkgs.love pkgs.nixgl.nixGLIntel];
       };
