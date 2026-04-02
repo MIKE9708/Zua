@@ -2,6 +2,7 @@ local Config = {}
 
 Config.screen_width = love.graphics.getWidth()
 Config.screen_height = love.graphics.getHeight()
+Config.name = "Player"
 
 Config.WARIOR_ASSET = "TinySword/Units/Purple_Units/Warrior/"
 Config.idle = Config.WARIOR_ASSET .. "Warrior_Idle.png"

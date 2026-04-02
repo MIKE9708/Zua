@@ -7,11 +7,12 @@ Map.Config = Config
 local background = {}
 local map = {}
 
-function Map.load()
+function Map:load()
     background = love.graphics.newImage(Map.Config.desert)
 end
 
-function Map.new()
+function Map:new()
+    self:load()
     for row = 0, Map.Config.tile_y - 1 do
         map[row] = {}
         for col = 0, Map.Config.tile_x - 1 do

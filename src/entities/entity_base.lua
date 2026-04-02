@@ -56,9 +56,9 @@ function EntityBase.init(config, etype)
     -- If the last frame has been reached restart from the First, but
     -- if the Animation is Attack when it reaches the last frame put the Player Animation in Idle
     function entity:updateFrame(animation, dt)
-        self.Config.timer = self.Config.timer + dt
-        if self.Config.timer > animation.speed then
-            self.Config.timer = 0
+        self.timer = self.timer + dt
+        if self.timer > animation.speed then
+            self.timer = 0
             self.CurrentState.frame = self.CurrentState.frame + 1
 
             if self.CurrentState.frame > animation.frames then

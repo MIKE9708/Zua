@@ -3,6 +3,8 @@ local Config = {}
 Config.screen_width = love.graphics.getWidth()
 Config.screen_height = love.graphics.getHeight()
 
+Config.name = "Enemy"
+
 Config.WARIOR_ASSET = "TinySword/Units/Red_units/Lancer/"
 Config.idle = Config.WARIOR_ASSET .. "Lancer_Idle.png"
 Config.run = Config.WARIOR_ASSET .. "Lancer_Run.png"

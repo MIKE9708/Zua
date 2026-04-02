@@ -1,3 +1,7 @@
+local WorldContext = require "src.world_context"
+local Player = require "src.entities.player.player"
+local Enemy = require "src.entities.enemy.enemy"
+
 local WorldManager = {
     entities = {} -- Contanis Player Enemies and NPC
 }
@@ -15,9 +19,22 @@ local CollisionAction = {
     Block = 2
 }
 
-function WorldManager.AddEntity(entity, etype)
+function WorldManager:new()
+    self:load()
+end
+
+function WorldManager:load()
+    local mPlayer = Player.new(400, 300)
+    local mEnemy = Enemy.new(400, 300)
+
+    self:AddEntity(mPlayer, WorldManager.Type.Player)
+    self:AddEntity(mEnemy, WorldManager.Type.Enemy)
+
+end
+
+function WorldManager:AddEntity(entity, etype)
     if etype == WorldManager.Type.Player then
-        WorldManager.setPlayerKeyHandler(
+        self:setPlayerKeyHandler(
             function(key)
                 entity:handleKeyPress(key)
             end
@@ -30,28 +47,28 @@ function WorldManager.AddEntity(entity, etype)
     })
 end
 
-function WorldManager.setPlayerKeyHandler(handlerFn)
-    WorldManager.handlePlayerKeyPress = handlerFn
+function WorldManager:setPlayerKeyHandler(handlerFn)
+    self.handlePlayerKeyPress = handlerFn
 end
 
-function WorldManager.handleKey(key)
-    WorldManager.handlePlayerKeyPress(key)
+function WorldManager:handleKey(key)
+    self.handlePlayerKeyPress(key)
 end
 
-function WorldManager.checkCollision()
-    for j = 1, #WorldManager.entities, 1 do
-        entity1 = WorldManager.entities[j]
-        for i = j + 1, #WorldManager.entities, 1 do
-            entity2 = WorldManager.entities[i]
-            overlap = WorldManager.areOverlap(entity1, entity2)
+function WorldManager:checkCollision()
+    for j = 1, #self.entities, 1 do
+        entity1 = self.entities[j]
+        for i = j + 1, #self.entities, 1 do
+            entity2 = self.entities[i]
+            overlap = self.areOverlap(entity1, entity2)
             if overlap then
-                WorldManager.handleCollisions(entity1, entity2)
+                self.handleCollisions(entity1, entity2)
             end
         end
     end
 end
 
-function WorldManager.areOverlap(entity1, entity2)
+function WorldManager:areOverlap(entity1, entity2)
     local distance_x = math.abs(entity1.base.x - entity2.x)
     local distance_y = math.abs(entity1.base.y - entity2.y)
     -- Less Computation not SQRT
@@ -100,21 +117,21 @@ function tprint(tbl, indent)
     return toprint
 end
 
-function WorldManager.update(dt)
+function WorldManager:update(dt)
     local px, py = 0, 0
-    for _, e in ipairs(WorldManager.entities) do
+    local playerFlip = 0
+    for _, e in ipairs(self.entities) do
         if e.type == WorldManager.Type.Player then
-            px, py = e.entity:getPosition()
-            e.entity:update(dt)
-        elseif e.type == WorldManager.Type.Enemy then
-            e.entity:update(dt, px, py)
+            e.entity:update(dt, WorldContext)
+        elseif e.type == self.Type.Enemy then
+            e.entity:update(dt, WorldContext)
         end
     end
     -- WorldManager.checkCollision()
 end
 
-function WorldManager.draw()
-    for _, e in ipairs(WorldManager.entities) do
+function WorldManager:draw()
+    for _, e in ipairs(self.entities) do
         if e.entity and e.entity.draw then
             e.entity:draw()
         end
