@@ -25,5 +25,7 @@ To run the game:
 
 ```bash
 nix develop
+```
+```bash
 nixGLIntel love .
 ```
